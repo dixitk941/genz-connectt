@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import Features from './pages/Features';
+import GithubIntegration from './pages/GithubIntegration';
+import ContactForm from './pages/ContactForm';
+import About from './pages/About';
+import Header from './components/Header';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/contact" element={<ContactForm />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/githubintegration" element={<GithubIntegration />} />
+          </Routes>
+        </main>
+        <footer className="bg-black text-green-500 p-4 text-center">
+          © 2023 GenZ Connect. All rights reserved.
+        </footer>
+      </div>
+    </Router>
   );
 }
 
