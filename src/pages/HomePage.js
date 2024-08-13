@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import Features from './Features';
 import ContactForm from './ContactForm';
 import CreateMeeting from './CreateMeeting';
+import Room from './Room'
 
 
 
@@ -15,6 +16,7 @@ const HomePage = () => {
             <Features />
             <CreateMeeting />
             <ContactForm />
+            <Room />
             
             <Footer />
             

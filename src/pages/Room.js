@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import BurgerMenu from '../components/BurgerMenu';
 import VideoConference from '../components/VideoConference';
-import UserList from '../components/UserList';
 import ChatBox from '../components/ChatBox';
 
 const Room = () => {
@@ -12,22 +13,43 @@ const Room = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const auth = getAuth();
-    const db = getFirestore();
-
-    onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-        const meetingDoc = await getDoc(doc(db, 'meetings', meetingId));
-        if (meetingDoc.exists() && meetingDoc.data().link === `https://genzconnectt.vercel.app/room/${meetingId}`) {
-          setIsAuthorized(true);
-        } else {
+        try {
+          if (!meetingId) {
+            console.error('meetingId is undefined');
+            setIsAuthorized(false);
+            return;
+          }
+
+          console.log('meetingId:', meetingId);
+
+          const meetingDocRef = doc(db, 'meetings', meetingId);
+          const meetingDoc = await getDoc(meetingDocRef);
+
+          if (meetingDoc.exists()) {
+            console.log('Meeting document data:', meetingDoc.data());
+            if (meetingDoc.data().meetingLink === `https://genzconnectt.vercel.app/room/${meetingId}`) {
+              setIsAuthorized(true);
+            } else {
+              console.error('Meeting link does not match');
+              setIsAuthorized(false);
+            }
+          } else {
+            console.error('Meeting document does not exist');
+            setIsAuthorized(false);
+          }
+        } catch (error) {
+          console.error('Error fetching meeting document:', error);
           setIsAuthorized(false);
         }
       } else {
         setIsAuthorized(false);
       }
     });
+
+    return () => unsubscribe();
   }, [meetingId]);
 
   if (!isAuthorized) {
@@ -36,12 +58,12 @@ const Room = () => {
 
   return (
     <div className="min-h-screen bg-black text-green-500">
+      <BurgerMenu />
       <main className="flex flex-col md:flex-row p-4 space-y-4 md:space-y-0 md:space-x-4">
         <div className="flex-1 flex flex-col space-y-4">
           <VideoConference user={user} />
           <ChatBox user={user} />
         </div>
-        <UserList className="flex-none w-full md:w-1/4 bg-green-900 bg-opacity-20 rounded-lg p-4" />
       </main>
     </div>
   );

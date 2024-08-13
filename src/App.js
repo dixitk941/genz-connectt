@@ -1,12 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import Features from './pages/Features';
-import GithubIntegration from './pages/GithubIntegration';
 import ContactForm from './pages/ContactForm';
 import About from './pages/About';
-import Room from './pages/Room'
-import Header from './components/Header';
+import Room from './pages/Room';
+import GithubIntegration from './pages/GithubIntegration';
 
 function App() {
   return (

@@ -1,45 +1,54 @@
-// src/components/ChatBox.js
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { collection, addDoc, query, onSnapshot, orderBy, serverTimestamp } from 'firebase/firestore';
+import { useParams } from 'react-router-dom';
+import { db } from './firebaseConfig'; // Ensure you have this import
 
-const ChatBox = () => {
-  const [localStream, setLocalStream] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
-  const localVideoRef = useRef(null);
-  const remoteVideoRef = useRef(null);
-  const peerConnection = useRef(null);
+const ChatBox = ({ user }) => {
+  const { meetingId } = useParams(); // Get meetingId from URL parameters
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
-    const startWebRTC = async () => {
-      try {
-        const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        setLocalStream(localStream);
-        localVideoRef.current.srcObject = localStream;
+    const q = query(collection(db, 'meetings', meetingId, 'messages'), orderBy('createdAt'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMessages(messages);
+    });
 
-        const pc = new RTCPeerConnection();
-        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+    return () => unsubscribe();
+  }, [meetingId]);
 
-        pc.ontrack = event => {
-          setRemoteStream(event.streams[0]);
-          remoteVideoRef.current.srcObject = event.streams[0];
-        };
-
-        peerConnection.current = pc;
-      } catch (error) {
-        console.error("Error starting WebRTC: ", error);
-      }
-    };
-
-    startWebRTC();
-  }, []);
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    if (newMessage.trim()) {
+      await addDoc(collection(db, 'meetings', meetingId, 'messages'), {
+        text: newMessage,
+        createdAt: serverTimestamp(),
+        userId: user.uid,
+        username: user.displayName
+      });
+      setNewMessage('');
+    }
+  };
 
   return (
-    <div className="p-4 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">Chat</h2>
-      <div className="border border-gray-300 p-2 rounded-lg mb-4">
-        <video ref={localVideoRef} autoPlay muted className="w-full rounded-lg mb-2" />
-        <video ref={remoteVideoRef} autoPlay className="w-full rounded-lg" />
+    <div className="chat-box">
+      <div className="messages">
+        {messages.map(message => (
+          <div key={message.id} className="message">
+            <strong>{message.username}</strong>: {message.text}
+          </div>
+        ))}
       </div>
-      <input type="text" className="mt-2 w-full p-2 border border-gray-300 rounded-lg" placeholder="Type a message..." />
+      <form onSubmit={sendMessage}>
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Type a message"
+        />
+        <button type="submit">Send</button>
+      </form>
     </div>
   );
 };
