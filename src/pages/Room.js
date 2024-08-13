@@ -65,6 +65,44 @@ const Room = () => {
           <ChatBox user={user} />
         </div>
       </main>
+      <div className="sidebar">
+        <a href="#" onClick={() => console.log('openvideo')} data-toggle="tooltip" data-placement="right" title="Dashboard">
+          <i className="fas fa-desktop fa-lg" />
+        </a>
+        <a href="#" onClick={() => console.log('openboard')} data-toggle="tooltip" data-placement="right" title="White Board">
+          <i className="fas fa-file-signature fa-lg" />
+        </a>
+        <a href="#" onClick={() => console.log('opengit')} data-toggle="tooltip" data-placement="right" title="GitHub">
+          <i className="fab fa-github fa-2x" />
+        </a>
+        <a href="#" onClick={() => console.log('openlab')} data-toggle="tooltip" data-placement="right" title="Virtual Environment">
+          <i className="fas fa-laptop-code fa-lg" />
+        </a>
+        <a href="#" onClick={() => console.log('openchat')} data-toggle="tooltip" data-placement="right" title="Chat">
+          <i className="fas fa-comment fa-lg" />
+        </a>
+        <a href="#" onClick={() => console.log('opensettings')} data-toggle="tooltip" data-placement="right" title="Toggle Controls">
+          <i className="fas fa-sliders-h fa-lg" />
+        </a>
+      </div>
+      <div className="footer row" id="setting">
+        <div className="col-md-4 my-auto">
+          <button disabled id="toggleCamera">
+            <i id="toggleCameraIcon" className="fa fa-video-camera" aria-hidden="true" />
+          </button>
+        </div>
+        <div className="col-md-4 my-auto">
+          <button disabled id="toggleMic">
+            <i id="toggleMicIcon" className="fa fa-microphone" aria-hidden="true" />
+          </button>
+        </div>
+        <div className="col-md-4" style={{ backgroundColor: 'red' }}>
+          <button disabled id="hangupBtn">
+            <i className="material-icons mdc-button__icon mt-3" aria-hidden="true">call_end</i>
+            <span className="mdc-button__label" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
