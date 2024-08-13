@@ -19,7 +19,7 @@ const Room = () => {
       if (user) {
         setUser(user);
         const meetingDoc = await getDoc(doc(db, 'meetings', meetingId));
-        if (meetingDoc.exists() && meetingDoc.data().link === meetingId) {
+        if (meetingDoc.exists() && meetingDoc.data().link === `https://genzconnectt.vercel.app/room/${meetingId}`) {
           setIsAuthorized(true);
         } else {
           setIsAuthorized(false);
