@@ -19,7 +19,7 @@ function App() {
             <Route path="/features" element={<Features />} />
             <Route path="/contact" element={<ContactForm />} />
             <Route path="/about" element={<About />} />
-            <Route path="/room/:roomId" element={<Room />} />
+            <Route path="/room/:meetingId" element={<Room />} />
             <Route path="/githubintegration" element={<GithubIntegration />} />
           </Routes>
         </main>
