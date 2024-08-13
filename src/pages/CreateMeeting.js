@@ -47,7 +47,7 @@ const CreateMeeting = () => {
     }
 
     const meetingId = uuidv4();
-    const link = `https://genzconnectt.app/room/${meetingId}`;
+    const link = `https://genzconnectt.vercel.app/room/${meetingId}`;
 
     // Store details in Firebase
     await setDoc(doc(collection(db, 'meetings'), meetingId), {
