@@ -11,7 +11,7 @@ const RepoDetails = () => {
 
   useEffect(() => {
     const fetchRepoContent = async () => {
-      const token = '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'; // Replace with your actual token
+      const token = process.env.REACT_APP_GITHUB_TOKEN;
       try {
         const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/contents`, {
           headers: {
