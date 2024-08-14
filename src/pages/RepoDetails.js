@@ -11,16 +11,24 @@ const RepoDetails = () => {
 
   useEffect(() => {
     const fetchRepoContent = async () => {
-      const token = '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'; // Replace with your actual token
       try {
+        // Fetch the token from the environment variable
+        const token = process.env.REACT_APP_GITHUB_TOKEN;
+
+        if (!token) {
+          throw new Error('GitHub token is not set in environment variables.');
+        }
+
         const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/contents`, {
           headers: {
             Authorization: `token ${token}`
           }
         });
+
         if (!response.ok) {
           throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
+
         const data = await response.json();
         setRepoContent(data);
         setLoading(false);
