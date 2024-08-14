@@ -31,9 +31,9 @@ const RepoDetails = () => {
 
         const data = await response.json();
         setRepoContent(data);
-        setLoading(false);
       } catch (error) {
         setError(error.message);
+      } finally {
         setLoading(false);
       }
     };
@@ -44,6 +44,7 @@ const RepoDetails = () => {
   const handleFileClick = async (file) => {
     setSelectedFile(file);
     setLoading(true);
+    setError(null); // Reset error state before new request
     try {
       const response = await fetch(file.download_url);
       if (!response.ok) {
@@ -51,9 +52,9 @@ const RepoDetails = () => {
       }
       const content = await response.text();
       setFileContent(content);
-      setLoading(false);
     } catch (error) {
       setError(error.message);
+    } finally {
       setLoading(false);
     }
   };
