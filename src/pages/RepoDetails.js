@@ -59,33 +59,31 @@ const RepoDetails = () => {
     }
   };
 
-  if (loading) {
-    return <div className="text-green-500 text-xl animate-pulse">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="text-green-500 text-xl">Error: {error}</div>;
-  }
-
   return (
     <div className="p-4 bg-black min-h-screen">
-      <h1 className="text-green-500 text-2xl font-bold mb-4">Repository Content</h1>
-      <ul className="list-none p-0">
-        {repoContent.map((file) => (
-          <li
-            key={file.sha}
-            className="cursor-pointer p-2 border-b border-green-500 hover:bg-green-500 hover:text-black transition duration-300 ease-in-out transform hover:scale-105"
-            onClick={() => handleFileClick(file)}
-          >
-            <span className="text-green-500">{file.name}</span>
-          </li>
-        ))}
-      </ul>
-      {selectedFile && (
-        <div className="mt-4">
-          <h2 className="text-green-500 text-xl font-bold">Selected File</h2>
-          <pre className="text-green-500 bg-black p-4 rounded overflow-x-auto whitespace-pre-wrap">{fileContent}</pre>
-        </div>
+      {loading && <div className="text-green-500 text-xl animate-pulse">Loading...</div>}
+      {error && <div className="text-red-500 text-xl">Error: {error}</div>}
+      {!loading && !error && (
+        <>
+          <h1 className="text-green-500 text-2xl font-bold mb-4">Repository Content</h1>
+          <ul className="list-none p-0">
+            {repoContent.map((file) => (
+              <li
+                key={file.sha}
+                className="cursor-pointer p-3 border-b border-green-500 hover:bg-green-500 hover:text-black transition-colors duration-300 ease-in-out transform hover:scale-105"
+                onClick={() => handleFileClick(file)}
+              >
+                <span className="text-green-500">{file.name}</span>
+              </li>
+            ))}
+          </ul>
+          {selectedFile && (
+            <div className="mt-6">
+              <h2 className="text-green-500 text-xl font-bold">Selected File</h2>
+              <pre className="text-green-500 bg-gray-800 p-4 rounded overflow-x-auto whitespace-pre-wrap">{fileContent}</pre>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
