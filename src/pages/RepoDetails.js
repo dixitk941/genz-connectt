@@ -12,7 +12,6 @@ const RepoDetails = () => {
   useEffect(() => {
     const fetchRepoContent = async () => {
       try {
-        // Fetch the token from the environment variable
         const token = process.env.REACT_APP_GITHUB_TOKEN;
 
         if (!token) {
@@ -44,7 +43,7 @@ const RepoDetails = () => {
   const handleFileClick = async (file) => {
     setSelectedFile(file);
     setLoading(true);
-    setError(null); // Reset error state before new request
+    setError(null);
     try {
       const response = await fetch(file.download_url);
       if (!response.ok) {
@@ -60,17 +59,18 @@ const RepoDetails = () => {
   };
 
   return (
-    <div className="p-4 bg-black min-h-screen">
+    <div className="p-6 bg-black min-h-screen">
       {loading && <div className="text-green-500 text-xl animate-pulse">Loading...</div>}
       {error && <div className="text-red-500 text-xl">Error: {error}</div>}
+
       {!loading && !error && (
         <>
-          <h1 className="text-green-500 text-2xl font-bold mb-4">Repository Content</h1>
+          <h1 className="text-green-500 text-3xl font-bold mb-6">Repository: {repoName}</h1>
           <ul className="list-none p-0">
             {repoContent.map((file) => (
               <li
                 key={file.sha}
-                className="cursor-pointer p-3 border-b border-green-500 hover:bg-green-500 hover:text-black transition-colors duration-300 ease-in-out transform hover:scale-105"
+                className="cursor-pointer p-4 border-b border-green-500 hover:bg-green-500 hover:text-black transition-transform duration-300 ease-in-out transform hover:scale-105"
                 onClick={() => handleFileClick(file)}
               >
                 <span className="text-green-500">{file.name}</span>
@@ -78,9 +78,9 @@ const RepoDetails = () => {
             ))}
           </ul>
           {selectedFile && (
-            <div className="mt-6">
-              <h2 className="text-green-500 text-xl font-bold">Selected File</h2>
-              <pre className="text-green-500 bg-gray-800 p-4 rounded overflow-x-auto whitespace-pre-wrap">{fileContent}</pre>
+            <div className="mt-6 bg-gray-800 p-4 rounded-lg shadow-lg">
+              <h2 className="text-green-500 text-xl font-semibold mb-4">Selected File</h2>
+              <pre className="text-green-400 bg-gray-900 p-4 rounded overflow-x-auto whitespace-pre-wrap">{fileContent}</pre>
             </div>
           )}
         </>
