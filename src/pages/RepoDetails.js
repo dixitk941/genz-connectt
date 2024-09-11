@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 const RepoDetails = () => {
   const { username, repoName } = useParams();
   const [repoContent, setRepoContent] = useState([]);
+  const [folderContents, setFolderContents] = useState(new Map());
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileContent, setFileContent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -61,28 +62,35 @@ const RepoDetails = () => {
     } else if (file.type === 'dir') {
       if (openFolders.has(file.path)) {
         openFolders.delete(file.path);
-      } else {
-        openFolders.add(file.path);
-        try {
-          const response = await fetch(file.url, {
-            headers: {
-              Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
-            }
-          });
-          if (!response.ok) {
-            throw new Error(`Error: ${response.status} ${response.statusText}`);
-          }
-          const data = await response.json();
-          setRepoContent(prevContent => [...prevContent, ...data]);
-        } catch (error) {
-          setError(error.message);
-        }
+        setOpenFolders(new Set(openFolders));
+        return; // Stop here if folder is already open
       }
+
+      openFolders.add(file.path);
       setOpenFolders(new Set(openFolders));
+
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(file.url, {
+          headers: {
+            Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
+          }
+        });
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        setFolderContents(prev => new Map(prev).set(file.path, data));
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const renderFileList = (files) => (
+  const renderFileList = (files, parentPath = '') => (
     <ul className="list-none p-0 space-y-2">
       {files.map(file => (
         <li
@@ -100,6 +108,17 @@ const RepoDetails = () => {
     </ul>
   );
 
+  const renderFolderContents = () => (
+    <div className="mt-4 space-y-4">
+      {[...openFolders].map(folderPath => (
+        <div key={folderPath} className="ml-4 border-l-2 border-gray-600 pl-4">
+          <h2 className="text-green-500 text-xl font-bold mb-4">Contents of {folderPath}</h2>
+          {renderFileList(folderContents.get(folderPath) || [], folderPath)}
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="p-6 bg-black min-h-screen">
       {loading && <div className="text-green-500 text-xl animate-pulse">Loading...</div>}
@@ -108,7 +127,11 @@ const RepoDetails = () => {
       {!loading && !error && (
         <>
           <h1 className="text-green-500 text-3xl font-bold mb-6">Repository: {repoName}</h1>
-          {renderFileList(repoContent)}
+          <div>
+            <h2 className="text-green-500 text-2xl font-semibold mb-4">Top-Level Files and Folders</h2>
+            {renderFileList(repoContent)}
+          </div>
+          {renderFolderContents()}
           {selectedFile && (
             <div className="mt-6 bg-gray-900 p-4 rounded-lg shadow-lg">
               <h2 className="text-green-500 text-xl font-semibold mb-4">Selected File</h2>
