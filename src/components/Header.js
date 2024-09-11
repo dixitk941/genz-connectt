@@ -35,19 +35,21 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-black text-green-500 p-4 shadow-lg">
+    <header className="bg-black text-green-500 p-6 shadow-lg transition-transform duration-300">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-4xl font-extrabold tracking-wider">GenZ Connect</h1>
+        <h1 className="text-3xl font-extrabold tracking-wide">
+          <Link to="/" className="hover:text-green-400 transition-colors duration-300">GenZ Connect</Link>
+        </h1>
         <nav className="hidden md:flex space-x-8">
-          <Link to="/" className="hover:text-green-300">Home</Link>
-          <Link to="/features" className="hover:text-green-300">Features</Link>
-          <Link to="/contact" className="hover:text-green-300">Contact</Link>
-          <Link to="/about" className="hover:text-green-300">About</Link>
-          <Link to="/githubintegration" className="hover:text-green-300">GitHub Integration</Link>
+          <Link to="/" className="hover:text-green-400 transition-colors duration-300">Home</Link>
+          <Link to="/features" className="hover:text-green-400 transition-colors duration-300">Features</Link>
+          <Link to="/contact" className="hover:text-green-400 transition-colors duration-300">Contact</Link>
+          <Link to="/about" className="hover:text-green-400 transition-colors duration-300">About</Link>
+          <Link to="/githubintegration" className="hover:text-green-400 transition-colors duration-300">GitHub</Link>
           {isLoggedIn ? (
-            <button onClick={handleLogout} className="hover:text-green-300">Logout</button>
+            <button onClick={handleLogout} className="hover:text-green-400 transition-colors duration-300">Logout</button>
           ) : (
-            <button onClick={toggleModal} className="hover:text-green-300">Login</button>
+            <button onClick={toggleModal} className="hover:text-green-400 transition-colors duration-300">Login</button>
           )}
         </nav>
         <div className="md:hidden">
@@ -57,18 +59,18 @@ const Header = () => {
         </div>
       </div>
       {isMobileMenuOpen && (
-        <nav className="md:hidden">
-          <ul className="flex flex-col space-y-4 mt-4 text-center">
-            <li><Link to="/" className="hover:text-green-300">Home</Link></li>
-            <li><Link to="/features" className="hover:text-green-300">Features</Link></li>
-            <li><Link to="/contact" className="hover:text-green-300">Contact</Link></li>
-            <li><Link to="/about" className="hover:text-green-300">About</Link></li>
-            <li><Link to="/githubintegration" className="hover:text-green-300">GitHub</Link></li>
+        <nav className="md:hidden bg-black text-green-500 mt-4 p-4 rounded-lg shadow-lg">
+          <ul className="flex flex-col space-y-4 text-center">
+            <li><Link to="/" className="hover:text-green-400 transition-colors duration-300">Home</Link></li>
+            <li><Link to="/features" className="hover:text-green-400 transition-colors duration-300">Features</Link></li>
+            <li><Link to="/contact" className="hover:text-green-400 transition-colors duration-300">Contact</Link></li>
+            <li><Link to="/about" className="hover:text-green-400 transition-colors duration-300">About</Link></li>
+            <li><Link to="/githubintegration" className="hover:text-green-400 transition-colors duration-300">GitHub</Link></li>
             <li>
               {isLoggedIn ? (
-                <button onClick={handleLogout} className="hover:text-green-300">Logout</button>
+                <button onClick={handleLogout} className="hover:text-green-400 transition-colors duration-300">Logout</button>
               ) : (
-                <button onClick={toggleModal} className="hover:text-green-300">Login</button>
+                <button onClick={toggleModal} className="hover:text-green-400 transition-colors duration-300">Login</button>
               )}
             </li>
           </ul>
