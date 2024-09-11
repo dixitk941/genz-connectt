@@ -66,21 +66,21 @@ const RepoDetails = () => {
       {!loading && !error && (
         <>
           <h1 className="text-green-500 text-3xl font-bold mb-6">Repository: {repoName}</h1>
-          <ul className="list-none p-0">
+          <ul className="list-none p-0 space-y-2">
             {repoContent.map((file) => (
               <li
                 key={file.sha}
-                className="cursor-pointer p-4 border-b border-green-500 hover:bg-green-500 hover:text-black transition-transform duration-300 ease-in-out transform hover:scale-105"
+                className="cursor-pointer p-4 rounded-lg border border-green-500 bg-gray-800 hover:bg-green-600 hover:text-black transition-all duration-300 ease-in-out"
                 onClick={() => handleFileClick(file)}
               >
-                <span className="text-green-500">{file.name}</span>
+                <span className="text-green-300">{file.name}</span>
               </li>
             ))}
           </ul>
           {selectedFile && (
-            <div className="mt-6 bg-gray-800 p-4 rounded-lg shadow-lg">
+            <div className="mt-6 bg-gray-900 p-4 rounded-lg shadow-lg">
               <h2 className="text-green-500 text-xl font-semibold mb-4">Selected File</h2>
-              <pre className="text-green-400 bg-gray-900 p-4 rounded overflow-x-auto whitespace-pre-wrap">{fileContent}</pre>
+              <pre className="text-green-400 bg-gray-800 p-4 rounded overflow-x-auto whitespace-pre-wrap">{fileContent}</pre>
             </div>
           )}
         </>
