@@ -8,6 +8,7 @@ const RepoDetails = () => {
   const [fileContent, setFileContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [openFolders, setOpenFolders] = useState(new Set());
 
   useEffect(() => {
     const fetchRepoContent = async () => {
@@ -41,22 +42,63 @@ const RepoDetails = () => {
   }, [username, repoName]);
 
   const handleFileClick = async (file) => {
-    setSelectedFile(file);
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(file.download_url);
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
+    if (file.type === 'file') {
+      setSelectedFile(file);
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(file.download_url);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        const content = await response.text();
+        setFileContent(content);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
-      const content = await response.text();
-      setFileContent(content);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+    } else if (file.type === 'dir') {
+      if (openFolders.has(file.path)) {
+        openFolders.delete(file.path);
+      } else {
+        openFolders.add(file.path);
+        try {
+          const response = await fetch(file.url, {
+            headers: {
+              Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`
+            }
+          });
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+          }
+          const data = await response.json();
+          setRepoContent(prevContent => [...prevContent, ...data]);
+        } catch (error) {
+          setError(error.message);
+        }
+      }
+      setOpenFolders(new Set(openFolders));
     }
   };
+
+  const renderFileList = (files) => (
+    <ul className="list-none p-0 space-y-2">
+      {files.map(file => (
+        <li
+          key={file.sha}
+          className={`cursor-pointer p-4 rounded-lg border border-green-500 bg-gray-800 ${
+            file.type === 'dir' ? 'text-blue-400' : 'text-green-300'
+          } hover:bg-green-600 hover:text-black transition-all duration-300 ease-in-out`}
+          onClick={() => handleFileClick(file)}
+        >
+          <span className={`flex items-center ${file.type === 'dir' ? 'font-semibold' : ''}`}>
+            {file.type === 'dir' ? '📁' : '📄'} {file.name}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <div className="p-6 bg-black min-h-screen">
@@ -66,17 +108,7 @@ const RepoDetails = () => {
       {!loading && !error && (
         <>
           <h1 className="text-green-500 text-3xl font-bold mb-6">Repository: {repoName}</h1>
-          <ul className="list-none p-0 space-y-2">
-            {repoContent.map((file) => (
-              <li
-                key={file.sha}
-                className="cursor-pointer p-4 rounded-lg border border-green-500 bg-gray-800 hover:bg-green-600 hover:text-black transition-all duration-300 ease-in-out"
-                onClick={() => handleFileClick(file)}
-              >
-                <span className="text-green-300">{file.name}</span>
-              </li>
-            ))}
-          </ul>
+          {renderFileList(repoContent)}
           {selectedFile && (
             <div className="mt-6 bg-gray-900 p-4 rounded-lg shadow-lg">
               <h2 className="text-green-500 text-xl font-semibold mb-4">Selected File</h2>
